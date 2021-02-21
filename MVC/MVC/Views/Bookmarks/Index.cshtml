@@ -1,0 +1,49 @@
+﻿@model IEnumerable<ReadLater.Entities.Bookmark>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>Index</h2>
+
+<p>
+    <a class="js-get-create-form" data-action-url="@Url.Action("Create","Bookmarks")">Create new bookmark</a>
+</p>
+<div id="createFormHolder">
+</div>
+<table class="table">
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.URL)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.ShortDescription)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Category.Name)
+        </th>
+        <th></th>
+    </tr>
+    <tbody id="bookmarksPartialViewContainer">
+            @Html.Partial("_BookmarksList", Model)
+    </tbody>
+</table>
+
+<script src="~/Scripts/jquery-3.3.1.js"></script>
+<script type="text/javascript">
+    $(document).on('click', '.js-get-create-form', function () {
+        var actionUrl = $(this).data('action-url');
+        $.get(actionUrl, function (view) {
+            $('#createFormHolder').html(view);
+        });
+    });
+
+    $(document).on('click', '.js-save-bookmark', function () {
+        var actionUrl = $(this).data('action-url'),
+            reloadTableUrl = $(this).data('reload-action-url');
+        $.post(actionUrl, $('form').serialize(), function () {
+            $("#bookmarksPartialViewContainer").load(reloadTableUrl);
+            $("input[type=text]").val("");
+        });
+    });
+</script>
